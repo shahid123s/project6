@@ -139,6 +139,8 @@ const editUserLoad = async(req,res) => {
          const userData = await User.findById({_id:id});
          if(userData){
             res.render('edit-user',{user:userData})
+        console.log(req.body)
+
          }else{
             res.redirect('/admin/dashboard')
          }
@@ -150,12 +152,14 @@ const editUserLoad = async(req,res) => {
 
 const updateUsers = async (req,res) => {
     try{
+        console.log(req.body)
+
         const userData = await User.findByIdAndUpdate(
             {_id:req.body._id},
             {$set:{
                 name:req.body.name,
                 email:req.body.email,
-                mobile:req.body.mobile
+                mobile:req.body.contact
             }})
             if (userData) {
                 return res.redirect('/admin/dashboard');
@@ -181,6 +185,26 @@ const deleteUser = async(req, res) => {
     }
 };
 
+const searchUser = async (req, res) => {
+    try {
+        const search = req.body.search.trim().replace(/[^a-zA-Z0-9]/g, "");
+        const searchData = await User.find({
+            $and: [
+                {name: {$regex: new RegExp(search, 'i') }},
+                {is_admin: 0 }
+            ]
+        }).sort({name:1});
+
+        if(searchData.length > 0){
+            return res.render('search-user', { users: searchData });
+        }
+        else {
+            return res.render('search-user', { message: 'No user found' ,users: []});
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 module.exports = {
     loadLogin,
@@ -192,5 +216,6 @@ module.exports = {
     addUser,
     editUserLoad,
     updateUsers,
-    deleteUser
+    deleteUser,
+    searchUser
 }

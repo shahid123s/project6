@@ -34,6 +34,7 @@ admin_route.get('/home',auth.isLogin,adminController.loadDashboard)
 admin_route.get('/logout',auth.isLogin,adminController.logout)
 
 admin_route.get('/dashboard',auth.isLogin,adminController.adminDashboard)
+admin_route.post('/dashboard',auth.isLogin,adminController.searchUser)
 
 admin_route.get('/new-user', auth.isLogin, adminController.userAddpage)
 admin_route.post('/new-user', auth.isLogin, adminController.addUser)
